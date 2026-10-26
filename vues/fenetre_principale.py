@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLabel, QLineEdit)
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout,QSlider,QHBoxLayout, QLabel, QLineEdit
 
 from modeles.modele_fonction import Modele_Fonction
 from vues.canvas_mpl import CanvasMpl
@@ -13,15 +13,22 @@ class FenetrePrincipale(QMainWindow):
         # Le modèle : c'est lui qui fait les maths
         self.modele = Modele_Fonction()
 
-        # --- Les champs de saisie ---
+        # Les champs de saisie
         self.champ_fonction = QLineEdit("x**2")
         self.champ_xmin = QLineEdit("-10")
         self.champ_xmax = QLineEdit("10")
 
-        # --- Le canvas Matplotlib ---
+        # le slider pour x0
+        self.slider=QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(0,1000)
+        self.slider.setValue(500)
+        self.label_x0=QLabel("x0 = 0")
+
+
+        #  Le canvas Matplotlib
         self.canvas = CanvasMpl()
 
-        # --- Disposition : une ligne de champs, puis le canvas ---
+        #  Disposition : une ligne de champs, puis le canvas
         ligne_champs = QHBoxLayout()
         ligne_champs.addWidget(QLabel("f(x) ="))
         ligne_champs.addWidget(self.champ_fonction)
@@ -29,6 +36,12 @@ class FenetrePrincipale(QMainWindow):
         ligne_champs.addWidget(self.champ_xmin)
         ligne_champs.addWidget(QLabel("x max"))
         ligne_champs.addWidget(self.champ_xmax)
+
+        ligne_slider=QHBoxLayout()
+        ligne_slider.addWidget(QLabel("le point de tengance :"))
+        ligne_slider.addWidget(self.slider)
+        ligne_slider.addWidget(self.label_x0)
+
 
         disposition = QVBoxLayout()
         disposition.addLayout(ligne_champs)
@@ -39,13 +52,14 @@ class FenetrePrincipale(QMainWindow):
         self.setCentralWidget(conteneur)
 
         # Dès qu'on modifie un champ, on met à jour le dessin
-        self.champ_fonction.textChanged.connect(self.mettre_a_jour)
-        self.champ_xmin.textChanged.connect(self.mettre_a_jour)
-        self.champ_xmax.textChanged.connect(self.mettre_a_jour)
+        self.champ_fonction.textChanged.connect(self.a_jour)
+        self.champ_xmin.textChanged.connect(self.a_jour)
+        self.champ_xmax.textChanged.connect(self.a_jour)
+        self.slider.valueChanged.connect(self.a_jour)
 
-        self.mettre_a_jour()   # premier dessin au démarrage
+        self.a_jour()  # premier dessin au démarrage
 
-    def mettre_a_jour(self):
+    def a_jour(self):
         #  La fonction : le modèle dit si elle est valide
         fonction_ok = self.modele.set_fonction(self.champ_fonction.text())
         if fonction_ok:
@@ -62,7 +76,15 @@ class FenetrePrincipale(QMainWindow):
 
         bornes_ok = self.modele.set_bornes(x_min, x_max)
 
+        # conversion de la position du slider en vraie valeur de x0
+        fraction= self.slider.value()/1000
+        x0= x_min + fraction*(x_max-x_min)
+        self.modele.set_x0(x0)
+        self.label_x0.setText(str(x0))
+
+
         # On dessine seulement si tout est valide
         if fonction_ok and bornes_ok:
             xs, ys = self.modele.valeurs_f()
-            self.canvas.dessiner_fonction(xs, ys)
+            px,py = self.modele.point_tangence()
+            self.canvas.dessiner_fonction(xs, ys,px,py)

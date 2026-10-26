@@ -9,7 +9,7 @@ class Modele_Fonction:
         self.x_min = -10.0
         self.x_max = 10.0
         self.x0 = 0.0               #point de la tengence
-
+    # les setters
     def set_fonction(self, texte):
         try:
             expression = sp.sympify(texte)
@@ -33,7 +33,8 @@ class Modele_Fonction:
     def valeurs_f(self):
         #Retourne les x et les y de f entre les bornes (pour dessiner)
         xs = np.linspace(self.x_min, self.x_max, 400)
-        # broadcast_to sert pour les fonctions constantes (ex: f(x) = 5)
+
+        # broadcast_to sert pour les fonctions constantes
         ys = np.broadcast_to(self.f(xs), xs.shape)
         return xs, ys
 
