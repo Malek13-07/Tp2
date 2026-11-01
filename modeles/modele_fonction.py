@@ -16,12 +16,21 @@ class Modele_Fonction():
     def set_fonction(self, texte):
         try:
             expression = sp.sympify(texte)
+            if not expression.free_symbols <= {self.x}:
+                return False
+
             derivee = sp.diff(expression, self.x)
-            self.f = sp.lambdify(self.x, expression, "numpy")
-            self.df = sp.lambdify(self.x, derivee, "numpy")
-            return True
+            f = sp.lambdify(self.x, expression, "numpy")
+            df = sp.lambdify(self.x, derivee, "numpy")
+
+            test = np.array([1.0, 2.0])
+            np.broadcast_to(f(test), test.shape)
+            np.broadcast_to(df(test), test.shape)
         except Exception:
             return False
+        self.f = f
+        self.df = df
+        return True
 
     def set_bornes(self, x_min: float, x_max: float) -> bool:
         if x_min >= x_max:
