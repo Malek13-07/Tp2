@@ -1,6 +1,9 @@
 import numpy as np
 import sympy as sp
-class Modele_Fonction:
+from PyQt6.QtCore import QAbstractItemModel
+
+
+class Modele_Fonction():
 
     def __init__(self):
         self.x = sp.symbols("x")
@@ -34,7 +37,7 @@ class Modele_Fonction:
         #Retourne les x et les y de f entre les bornes (pour dessiner)
         xs = np.linspace(self.x_min, self.x_max, 400)
 
-        # broadcast_to sert pour les fonctions constantes
+        # broadcast_to pour les fonctions constantes
         ys = np.broadcast_to(self.f(xs), xs.shape)
         return xs, ys
 
@@ -46,7 +49,7 @@ class Modele_Fonction:
         return xs, ys
 
     def taux_variation(self):
-        #Pente moyenne entre x_min et x_max : (f(b) - f(a)) / (b - a)
+        #Pente moyenne entre x_min et x_max
         y_min = self.f(self.x_min)
         y_max = self.f(self.x_max)
         return (y_max - y_min) / (self.x_max - self.x_min)
@@ -65,3 +68,7 @@ class Modele_Fonction:
 
     def set_x0_fraction(self, fraction):
         self.set_x0(self.x_min + fraction * (self.x_max - self.x_min))
+
+    def derivee_x0(self):
+        # Pente de la tangente
+        return float(self.df(self.x0))
