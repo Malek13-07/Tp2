@@ -1,6 +1,4 @@
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
-import numpy as np
+
 # aide par l'ai pour cette classe
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
