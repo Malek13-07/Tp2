@@ -1,6 +1,8 @@
 from PyQt6 import uic
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QDockWidget
 from pathlib import Path
-from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QSlider, QHBoxLayout, QLabel, QLineEdit, QFileDialog
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QSlider, QHBoxLayout, QLabel, QLineEdit, QFileDialog, QColorDialog
 from modeles.modele_liste import ModeleListeFonctions
 from vues.fenetre_liste import FenetreListe
 from modeles.modele_fonction import Modele_Fonction
@@ -35,8 +37,12 @@ class FenetrePrincipale(QMainWindow):
         self.spinXMax.setValue(10)
 
         # Fenêtre de la liste
-        self.fenetre_liste = FenetreListe(self.modele_liste)
-        self.fenetre_liste.show()
+        # La liste placée dans un dock à droite de la fenêtre
+        self.dock = QDockWidget("Liste des fonctions", self)
+        self.dock.setWidget(FenetreListe(self.modele_liste))
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dock)
+        # Case à cocher dans le menu Affichage pour montrer ou masquer le dock
+        self.menuAffichage.addAction(self.dock.toggleViewAction())
 
         # Signaux
         self.comboFonctions.currentIndexChanged.connect(self.mise_a_jour)
@@ -47,6 +53,9 @@ class FenetrePrincipale(QMainWindow):
         self.actionGrille.setChecked(True)
         self.actionGrille.toggled.connect(self.changer_grille)
         self.actionExporterPdf.triggered.connect(self.exporter_pdf)
+        self.actionCouleurF.triggered.connect(lambda: self.choisir_couleur("couleur_f"))
+        self.actionCouleurDerivee.triggered.connect(lambda: self.choisir_couleur("couleur_derivee"))
+        self.actionCouleurTangente.triggered.connect(lambda: self.choisir_couleur("couleur_tangente"))
 
         self.borne_changee()
 
@@ -96,3 +105,10 @@ class FenetrePrincipale(QMainWindow):
         chemin, _ = QFileDialog.getSaveFileName(self, "Exporter en PDF", "graphique.pdf", "PDF (*.pdf)")
         if chemin:
             self.canvas.fig.savefig(chemin)   # savefig écrit la figure dans le fichier
+
+    def choisir_couleur(self, attribut):
+
+        couleur = QColorDialog.getColor(parent=self)
+        if couleur.isValid():
+            setattr(self.canvas, attribut, couleur.name())
+            self.mise_a_jour()

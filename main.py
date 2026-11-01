@@ -4,6 +4,8 @@ from vues.fenetre_principale import FenetrePrincipale
 from modeles.modele_liste import ModeleListeFonctions
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    with open("style.qss", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
     fenetre = FenetrePrincipale()
     fenetre.show()
     sys.exit(app.exec())
