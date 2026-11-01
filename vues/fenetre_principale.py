@@ -1,7 +1,8 @@
 from PyQt6 import uic
 from pathlib import Path
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout,QSlider,QHBoxLayout, QLabel, QLineEdit
-
+from modeles.modele_liste import ModeleListeFonctions
+from vues.fenetre_liste import FenetreListe
 from modeles.modele_fonction import Modele_Fonction
 from vues.canvas_mpl import CanvasMpl
 
@@ -32,7 +33,14 @@ class FenetrePrincipale(QMainWindow):
         self.spinXMin.valueChanged.connect(self.mise_a_jour)
         self.spinXMax.valueChanged.connect(self.mise_a_jour)
         self.sliderX0.valueChanged.connect(self.mise_a_jour)
+        # Modèle de la liste : chargé depuis le JSON au démarrage
+        chemin_json = Path(__file__).parent.parent / "fonctions.json"
+        self.modele_liste = ModeleListeFonctions(str(chemin_json))
+        self.modele_liste.charger_json()
 
+        # Fenêtre de la liste
+        self.fenetre_liste = FenetreListe(self.modele_liste)
+        self.fenetre_liste.show()
         self.mise_a_jour()
 
     def mise_a_jour(self):

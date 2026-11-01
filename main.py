@@ -1,14 +1,12 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from vues.fenetre_principale import FenetrePrincipale
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     fenetre = FenetrePrincipale()
-#     fenetre.show()
-#     sys.exit(app.exec())
-
 from modeles.modele_liste import ModeleListeFonctions
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    fenetre = FenetrePrincipale()
+    fenetre.show()
+    sys.exit(app.exec())
 
 m = ModeleListeFonctions("fonctions.json")
 m.charger_json()
