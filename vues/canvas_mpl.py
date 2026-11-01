@@ -13,6 +13,7 @@ class CanvasMpl(FigureCanvasQTAgg):
 
         self.ax_f = self.fig.add_subplot(1, 2, 1)   # gauche : la fonction
         self.ax_d = self.fig.add_subplot(1, 2, 2)   # droite : la dérivée
+        self.grille = True
 
     def dessiner(self, xs, ys, dxs, dys, txs, tys, px, py, pente, taux):
         # --- Graphique de gauche : f(x) ---
@@ -22,7 +23,7 @@ class CanvasMpl(FigureCanvasQTAgg):
         self.ax_f.plot(px, py, "o", color="red") # le point de tangence
         self.ax_f.set_ylim(min(ys), max(ys))
         self.ax_f.set_title("f(x)")
-        self.ax_f.grid(True)
+        self.ax_f.grid(self.grille)
 
         # --- Graphique de droite : f'(x) ---
         self.ax_d.clear()
@@ -30,6 +31,6 @@ class CanvasMpl(FigureCanvasQTAgg):
         self.ax_d.axhline(taux, linestyle="--", color="gray")
         self.ax_d.plot(px, pente, "o", color="red")             # le point (x0, f'(x0))
         self.ax_d.set_title("f'(x)")
-        self.ax_d.grid(True)
+        self.ax_d.grid(self.grille)
 
         self.draw()

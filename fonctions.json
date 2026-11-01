@@ -1,8 +1,8 @@
 {
   "fonctions": [
-    "sin(x)",
     "x**3 - 3*x",
     "cos(x)",
-    "x+1"
+    "x+1",
+    "sin(x)"
   ]
 }

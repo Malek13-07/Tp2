@@ -1,6 +1,6 @@
 from PyQt6 import uic
 from pathlib import Path
-from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout,QSlider,QHBoxLayout, QLabel, QLineEdit
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QSlider, QHBoxLayout, QLabel, QLineEdit, QFileDialog
 from modeles.modele_liste import ModeleListeFonctions
 from vues.fenetre_liste import FenetreListe
 from modeles.modele_fonction import Modele_Fonction
@@ -41,11 +41,14 @@ class FenetrePrincipale(QMainWindow):
         # Signaux
         self.comboFonctions.currentIndexChanged.connect(self.mise_a_jour)
         self.modele_liste.rowsInserted.connect(self.selectionner_derniere)
-        self.spinXMin.valueChanged.connect(self.mise_a_jour)
-        self.spinXMax.valueChanged.connect(self.mise_a_jour)
+        self.spinXMin.valueChanged.connect(self.borne_changee)
+        self.spinXMax.valueChanged.connect(self.borne_changee)
         self.sliderX0.valueChanged.connect(self.mise_a_jour)
+        self.actionGrille.setChecked(True)
+        self.actionGrille.toggled.connect(self.changer_grille)
+        self.actionExporterPdf.triggered.connect(self.exporter_pdf)
 
-        self.mise_a_jour()
+        self.borne_changee()
 
     def selectionner_derniere(self):
         # Après un ajout, on sélectionne la nouvelle fonction
@@ -56,7 +59,7 @@ class FenetrePrincipale(QMainWindow):
         fonction_ok = self.modele.set_fonction(self.comboFonctions.currentText())
         self.comboFonctions.setStyleSheet("" if fonction_ok else "background-color: #ffb3b3;")
 
-        # Bornes et point de tangence 
+        # Bornes et point de tangence
         bornes_ok = self.modele.set_bornes(self.spinXMin.value(), self.spinXMax.value())
         if bornes_ok:
             self.modele.set_x0_fraction(self.sliderX0.value() / 1000)
@@ -75,3 +78,21 @@ class FenetrePrincipale(QMainWindow):
             self.labelTaux.setText(f"{taux:.3f}")
             self.labelPointX0.setText(f"{px:.3f}")
             self.labelDerivee.setText(f"{pente:.3f}")
+
+    def borne_changee(self):
+        #  xMax reste au-dessus de xMin
+        pas = 0.1
+        self.spinXMax.setMinimum(self.spinXMin.value() + pas)
+        self.spinXMin.setMaximum(self.spinXMax.value() - pas)
+        self.mise_a_jour()
+
+    def changer_grille(self, visible):
+        # Le menu coché envoie True ou False
+        self.canvas.grille = visible
+        self.mise_a_jour()
+
+    def exporter_pdf(self):
+        # Boîte de dialogue pour choisir où enregistrer
+        chemin, _ = QFileDialog.getSaveFileName(self, "Exporter en PDF", "graphique.pdf", "PDF (*.pdf)")
+        if chemin:
+            self.canvas.fig.savefig(chemin)   # savefig écrit la figure dans le fichier
