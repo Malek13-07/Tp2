@@ -62,3 +62,6 @@ class Modele_Fonction:
         y0 = self.f(self.x0)
         ys = y0 + pente * (xs - self.x0)  # équation de la droite
         return xs, ys
+
+    def set_x0_fraction(self, fraction):
+        self.set_x0(self.x_min + fraction * (self.x_max - self.x_min))

@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+       <widget class="QDoubleSpinBox" name="spinXMin"/>
       </item>
       <item>
        <widget class="QLabel" name="label_3">
@@ -51,7 +51,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+       <widget class="QDoubleSpinBox" name="spinXMax"/>
       </item>
      </layout>
     </item>

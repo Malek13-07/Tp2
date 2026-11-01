@@ -1,4 +1,5 @@
 from PyQt6 import uic
+from pathlib import Path
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout,QSlider,QHBoxLayout, QLabel, QLineEdit
 
 from modeles.modele_fonction import Modele_Fonction
@@ -8,13 +9,19 @@ from vues.canvas_mpl import CanvasMpl
 class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi("fenetre_principale.ui", self)  # crée tous les widgets du .ui comme attributs
+        uic.loadUi(Path(__file__).parent / "fenetre_principale.ui", self)
 
+        # Le modèle : c'est lui qui fait les maths
         self.modele = Modele_Fonction()
+
+
+        layout_canvas = QVBoxLayout(self.widgetCanvas)
+        layout_canvas.setContentsMargins(0, 0, 0, 0)
         self.canvas = CanvasMpl()
-        self.layoutCanvas.addWidget(self.canvas)  # le canvas MPL est inséré dans le layout du .ui
+        layout_canvas.addWidget(self.canvas)
 
         # Valeurs de départ
+        self.champFonction.setText("x**2")
         self.spinXMin.setRange(-1000, 1000)
         self.spinXMax.setRange(-1000, 1000)
         self.spinXMin.setValue(-10)
